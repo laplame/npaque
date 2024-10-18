@@ -8,6 +8,7 @@ import Profile from './components/Profile';
 import Navbar from './components/Navbar'; // Importar el Navbar
 import LandingPage from './components/LandingPage';
 import ScrollEffectComponent from './components/ScrollEffectComponent'; // Importar ScrollEffectComponent
+import Cotizacion from './components/Cotizacion';
 
 function App() {
     return (
@@ -20,7 +21,7 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/cotizacion" element={<div>Formulario de Cotización</div>} /> {/* Ruta temporal */}
+                    <Route path="/cotizacion" element={<Cotizacion />} /> {/* Ruta para el formulario de cotización */}
                     <Route path="/scroll-effect" element={<ScrollEffectComponent />} /> {/* Ruta para ScrollEffectComponent */}
                 </Routes>
             </div>
