@@ -1,48 +1,79 @@
 // src/components/Register.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Register = () => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
+    const [formData, setFormData] = useState({ nombre: '', email: '', password: '' });
+    const navigate = useNavigate();
 
-    const handleRegister = async (e) => {
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/api/auth/register', { name, email, password });
-            setMessage('Registro exitoso. Por favor, inicie sesión.');
+            // Enviar datos de registro al backend
+            await axios.post('https://api.tuendpoint.com/register', formData, {
+                headers: { 'Content-Type': 'application/json' }
+            });
+            alert('Registro exitoso');
+            navigate('/dashboard'); // Redirigir al Dashboard
         } catch (error) {
-            setMessage('Error en el registro');
+            console.error('Error en el registro:', error);
+            alert('Hubo un error en el registro. Inténtalo de nuevo.');
         }
     };
 
     return (
-        <div>
-            <h2>Registro</h2>
-            <form onSubmit={handleRegister}>
-                <input
-                    type="text"
-                    placeholder="Nombre"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="Contraseña"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <button type="submit">Registrarse</button>
+        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow-md">
+            <h2 className="text-2xl font-bold mb-6 text-center">Registro</h2>
+            <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                    <label htmlFor="nombre" className="block text-gray-700 font-bold mb-2">Nombre</label>
+                    <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        value={formData.nombre}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-3 py-2 border rounded"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="email" className="block text-gray-700 font-bold mb-2">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-3 py-2 border rounded"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="password" className="block text-gray-700 font-bold mb-2">Contraseña</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-3 py-2 border rounded"
+                    />
+                </div>
+                <button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+                >
+                    Registrarse
+                </button>
             </form>
-            <p>{message}</p>
         </div>
     );
 };

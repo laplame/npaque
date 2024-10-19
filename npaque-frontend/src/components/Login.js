@@ -1,42 +1,67 @@
 // src/components/Login.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
+    const [formData, setFormData] = useState({ email: '', password: '' });
+    const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/api/auth/login', { email, password });
-            localStorage.setItem('token', response.data.token);
-            setMessage('Inicio de sesión exitoso');
+            // Enviar credenciales de inicio de sesión al backend
+            await axios.post('https://api.tuendpoint.com/login', formData, {
+                headers: { 'Content-Type': 'application/json' }
+            });
+            alert('Inicio de sesión exitoso');
+            navigate('/profile'); // Redirigir al perfil
         } catch (error) {
-            setMessage('Error en el inicio de sesión');
+            console.error('Error en el inicio de sesión:', error);
+            alert('Hubo un error en el inicio de sesión. Inténtalo de nuevo.');
         }
     };
 
     return (
-        <div>
-            <h2>Inicio de sesión</h2>
-            <form onSubmit={handleLogin}>
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="Contraseña"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <button type="submit">Iniciar sesión</button>
+        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow-md">
+            <h2 className="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h2>
+            <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                    <label htmlFor="email" className="block text-gray-700 font-bold mb-2">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-3 py-2 border rounded"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="password" className="block text-gray-700 font-bold mb-2">Contraseña</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-3 py-2 border rounded"
+                    />
+                </div>
+                <button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+                >
+                    Iniciar Sesión
+                </button>
             </form>
-            <p>{message}</p>
         </div>
     );
 };
